@@ -9,3 +9,72 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Organization {
+  id               String   @id @default(uuid())
+  name             String
+  responsable_name String
+  phone            String
+  email            String   @unique
+  password_hash    String
+  created_at       DateTime @default(now())
+
+  pets      Pet[]
+  orgAdress OrgAdress?
+
+  @@map("organizations")
+}
+
+model OrgAdress {
+  id       String @id @default(uuid())
+  zip_code String
+  street   String
+  district String
+  number   String
+
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String       @unique
+
+  @@map("org_adress")
+}
+
+model Pet {
+  id                String @id @default(uuid())
+  name              String
+  description       String
+  age               String
+  size              String
+  energy            String
+  independece_level String
+  animal_type       String
+  environment       String
+
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  organization_id String
+
+  petRequirements PetRequirements[]
+
+  petLocation PetLocation?
+
+  @@map("pet")
+}
+
+model PetLocation {
+  id        String @id @default(uuid())
+  latitude  String
+  longitude String
+
+  pet    Pet    @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+  pet_id String @unique
+
+  @@map("pet_location")
+}
+
+model PetRequirements {
+  id           String @id @default(uuid())
+  requirenebts String
+  pet          Pet    @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+  pet_id       String
+
+  @@map("pet_requirements")
+}
