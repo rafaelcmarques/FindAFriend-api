@@ -39,15 +39,15 @@ model OrgAdress {
 }
 
 model Pet {
-  id                String @id @default(uuid())
-  name              String
-  description       String
-  age               String
-  size              String
-  energy            String
-  independece_level String
-  animal_type       String
-  environment       String
+  id                 String @id @default(uuid())
+  name               String
+  description        String
+  age                String
+  size               String
+  energy             String
+  independence_level String
+  animal_type        String
+  environment        String
 
   organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   organization_id String
@@ -71,10 +71,10 @@ model PetLocation {
 }
 
 model PetRequirements {
-  id           String @id @default(uuid())
-  requirenebts String
-  pet          Pet    @relation(fields: [pet_id], references: [id], onDelete: Cascade)
-  pet_id       String
+  id          String @id @default(uuid())
+  requirement String
+  pet         Pet    @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+  pet_id      String
 
   @@map("pet_requirements")
 }
