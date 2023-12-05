@@ -54,7 +54,7 @@ export async function petRegister(
       organization_id,
     })
   } catch (error) {
-    reply.status(404).send()
+    reply.status(404).send({ message: error.message })
   }
 
   reply.status(201).send()

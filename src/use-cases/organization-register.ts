@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { hash } from 'bcryptjs'
+import { PrismaOrganizationRepository } from '@/repositories/prisma-organizations-repository'
+import { PrismaOrganizationAdressRepository } from '@/repositories/prisma-organizations-adress-repository'
 
 interface RegisterUseCaseParams {
   name: string
@@ -19,9 +21,9 @@ export async function registerUseCase({
   email,
   password,
   responsable_name,
+  phone,
   district,
   number,
-  phone,
   street,
   zip_code,
 }: RegisterUseCaseParams) {
@@ -37,23 +39,24 @@ export async function registerUseCase({
     throw new Error('E-mail already exists')
   }
 
-  const { id: org_id } = await prisma.organization.create({
-    data: {
-      name,
-      email,
-      password_hash,
-      phone,
-      responsable_name,
-    },
+  const prismaOrganizationRepository = new PrismaOrganizationRepository()
+
+  const { org_id } = await prismaOrganizationRepository.create({
+    name,
+    email,
+    password_hash,
+    responsable_name,
+    phone,
   })
 
-  await prisma.orgAdress.create({
-    data: {
-      district,
-      number,
-      street,
-      zip_code,
-      organization_id: org_id,
-    },
+  const prismaOrganizationAdressRepository =
+    new PrismaOrganizationAdressRepository()
+
+  prismaOrganizationAdressRepository.create({
+    district,
+    number,
+    street,
+    zip_code,
+    organization: { connect: { id: org_id } },
   })
 }

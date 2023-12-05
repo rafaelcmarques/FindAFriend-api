@@ -1,4 +1,7 @@
 import { prisma } from '@/lib/prisma'
+import { PrismaPetRepository } from '@/repositories/prisma-pet-repository'
+import { PrismaPetLocationRepository } from '@/repositories/prisma-pet-location-repository'
+import { PrismaPetRequirementsRepository } from '@/repositories/prisma-pet-requirements-repository'
 
 interface PetRegisterParams {
   name: string
@@ -31,9 +34,9 @@ export async function petRegisterUseCase({
   requirements,
   organization_id,
 }: PetRegisterParams) {
-  const organization = await prisma.pet.findFirst({
+  const organization = await prisma.organization.findFirst({
     where: {
-      organization_id,
+      id: organization_id,
     },
   })
 
@@ -41,34 +44,32 @@ export async function petRegisterUseCase({
     throw new Error('Organization does not exist')
   }
 
-  const { id: pet_id } = await prisma.pet.create({
-    data: {
-      name,
-      age,
-      description,
-      animal_type,
-      energy,
-      environment,
-      independence_level,
-      size,
-      organization_id,
-    },
+  const prismaPetRepository = new PrismaPetRepository()
+  const { pet_id } = await prismaPetRepository.create({
+    name,
+    description,
+    age,
+    size,
+    energy,
+    independence_level,
+    animal_type,
+    environment,
+    organization: { connect: { id: organization_id } },
   })
 
-  await prisma.petLocation.create({
-    data: {
-      latitude,
-      longitude,
-      pet_id,
-    },
+  const prismaPetLocationRepository = new PrismaPetLocationRepository()
+  await prismaPetLocationRepository.create({
+    latitude,
+    longitude,
+    pet: { connect: { id: pet_id } },
   })
 
-  const requirementsData = requirements.map((requirement) => ({
+  const prismaPetRequirementsRepository = new PrismaPetRequirementsRepository()
+
+  const petRequirementsData = requirements.map((requirement) => ({
     requirement,
     pet_id,
   }))
 
-  await prisma.petRequirements.createMany({
-    data: requirementsData,
-  })
+  await prismaPetRequirementsRepository.create(petRequirementsData)
 }

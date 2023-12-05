@@ -16,30 +16,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     number: z.string(),
   })
 
-  const {
-    name,
-    email,
-    password,
-    responsable_name,
-    phone,
-    district,
-    number,
-    street,
-    zip_code,
-  } = registrationSchema.parse(request.body)
+  const registrationData = registrationSchema.parse(request.body)
 
   try {
-    await registerUseCase({
-      name,
-      email,
-      password,
-      responsable_name,
-      phone,
-      district,
-      number,
-      street,
-      zip_code,
-    })
+    await registerUseCase(registrationData)
   } catch (error) {
     return reply.status(409).send()
   }
