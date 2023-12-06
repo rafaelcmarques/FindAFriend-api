@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
-import { PrismaPetRepository } from '@/repositories/prisma-pet-repository'
-import { PrismaPetLocationRepository } from '@/repositories/prisma-pet-location-repository'
-import { PrismaPetRequirementsRepository } from '@/repositories/prisma-pet-requirements-repository'
+import { PetLocationRepository } from '@/repositories/pet-location-repository'
+import { PetRepository } from '@/repositories/pet-repository'
+import { PetRequirementsRepository } from '@/repositories/pet-requirements-repository'
 
 interface PetRegisterParams {
   name: string
@@ -20,32 +20,14 @@ interface PetRegisterParams {
   organization_id: string
 }
 
-export async function petRegisterUseCase({
-  name,
-  description,
-  age,
-  size,
-  energy,
-  independence_level,
-  animal_type,
-  environment,
-  latitude,
-  longitude,
-  requirements,
-  organization_id,
-}: PetRegisterParams) {
-  const organization = await prisma.organization.findFirst({
-    where: {
-      id: organization_id,
-    },
-  })
+export class PetRegisterUseCase {
+  constructor(
+    private petRepository: PetRepository,
+    private petLocationRepository: PetLocationRepository,
+    private petRequirements: PetRequirementsRepository,
+  ) {}
 
-  if (!organization) {
-    throw new Error('Organization does not exist')
-  }
-
-  const prismaPetRepository = new PrismaPetRepository()
-  const { pet_id } = await prismaPetRepository.create({
+  async execute({
     name,
     description,
     age,
@@ -54,22 +36,34 @@ export async function petRegisterUseCase({
     independence_level,
     animal_type,
     environment,
-    organization: { connect: { id: organization_id } },
-  })
-
-  const prismaPetLocationRepository = new PrismaPetLocationRepository()
-  await prismaPetLocationRepository.create({
     latitude,
     longitude,
-    pet: { connect: { id: pet_id } },
-  })
+    requirements,
+    organization_id,
+  }: PetRegisterParams) {
+    const pet = await this.petRepository.create({
+      name,
+      description,
+      age,
+      size,
+      energy,
+      independence_level,
+      animal_type,
+      environment,
+      organization: { connect: { id: organization_id } },
+    })
 
-  const prismaPetRequirementsRepository = new PrismaPetRequirementsRepository()
+    await this.petLocationRepository.create({
+      latitude,
+      longitude,
+      pet: { connect: { id: pet.id } },
+    })
 
-  const petRequirementsData = requirements.map((requirement) => ({
-    requirement,
-    pet_id,
-  }))
+    const petRequirementsData = requirements.map((requirement) => ({
+      requirement,
+      pet_id: pet.id,
+    }))
 
-  await prismaPetRequirementsRepository.create(petRequirementsData)
+    await this.petRequirements.create(petRequirementsData)
+  }
 }

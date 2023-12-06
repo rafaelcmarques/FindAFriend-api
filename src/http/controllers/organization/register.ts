@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
-import { registerUseCase } from '@/use-cases/organization-register'
+import { makeOrganizationRegisterUseCase } from '@/factories/make-organization-register-use-case'
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
   const registrationSchema = z.object({
@@ -17,9 +17,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
   })
 
   const registrationData = registrationSchema.parse(request.body)
+  const registerUseCase = makeOrganizationRegisterUseCase()
 
   try {
-    await registerUseCase(registrationData)
+    await registerUseCase.execute(registrationData)
   } catch (error) {
     return reply.status(409).send()
   }

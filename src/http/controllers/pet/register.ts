@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { petRegisterUseCase } from '@/use-cases/pet-register'
+import { MakePetRegisterUseCase } from '@/factories/make-pet-register-use-case'
 
 export async function petRegister(
   request: FastifyRequest,
@@ -23,36 +23,12 @@ export async function petRegister(
     organization_id: z.string(),
   })
 
-  const {
-    name,
-    description,
-    age,
-    size,
-    energy,
-    independence_level,
-    animal_type,
-    environment,
-    latitude,
-    longitude,
-    requirements,
-    organization_id,
-  } = petRegisterSchema.parse(request.body)
+  const petData = petRegisterSchema.parse(request.body)
+
+  const petRegisterUseCase = MakePetRegisterUseCase()
 
   try {
-    await petRegisterUseCase({
-      name,
-      description,
-      age,
-      size,
-      energy,
-      independence_level,
-      animal_type,
-      environment,
-      latitude,
-      longitude,
-      requirements,
-      organization_id,
-    })
+    await petRegisterUseCase.execute(petData)
   } catch (error) {
     reply.status(404).send({ message: error.message })
   }
