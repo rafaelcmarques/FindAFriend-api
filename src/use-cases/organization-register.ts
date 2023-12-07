@@ -8,7 +8,7 @@ interface RegisterUseCaseParams {
   password: string
   phone: string
   responsable_name: string
-
+  city: string
   district: string
   number: string
   street: string
@@ -29,6 +29,7 @@ export class RegisterUseCase {
     phone,
     district,
     number,
+    city,
     street,
     zip_code,
   }: RegisterUseCaseParams) {
@@ -54,6 +55,7 @@ export class RegisterUseCase {
       number,
       street,
       zip_code,
+      city,
       organization: { connect: { id: organization.id } },
     })
   }

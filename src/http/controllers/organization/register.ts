@@ -9,7 +9,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
     phone: z.string(),
     email: z.string().email(),
     password: z.string(),
-
+    city: z.string(),
     zip_code: z.string(),
     street: z.string(),
     district: z.string(),

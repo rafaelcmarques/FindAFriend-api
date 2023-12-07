@@ -15,7 +15,11 @@ export async function petRegister(
     independence_level: z.string(),
     animal_type: z.string(),
     environment: z.string(),
-
+    city: z.string(),
+    district: z.string(),
+    number: z.string(),
+    street: z.string(),
+    zip_code: z.string(),
     latitude: z.string(),
     longitude: z.string(),
 

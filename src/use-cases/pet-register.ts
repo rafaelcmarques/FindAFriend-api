@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/prisma'
 import { PetLocationRepository } from '@/repositories/pet-location-repository'
 import { PetRepository } from '@/repositories/pet-repository'
 import { PetRequirementsRepository } from '@/repositories/pet-requirements-repository'
@@ -12,6 +11,11 @@ interface PetRegisterParams {
   independence_level: string
   animal_type: string
   environment: string
+  city: string
+  district: string
+  number: string
+  street: string
+  zip_code: string
 
   latitude: string
   longitude: string
@@ -36,6 +40,11 @@ export class PetRegisterUseCase {
     independence_level,
     animal_type,
     environment,
+    city,
+    district,
+    number,
+    street,
+    zip_code,
     latitude,
     longitude,
     requirements,
@@ -56,6 +65,11 @@ export class PetRegisterUseCase {
     await this.petLocationRepository.create({
       latitude,
       longitude,
+      city,
+      district,
+      number,
+      street,
+      zip_code,
       pet: { connect: { id: pet.id } },
     })
 
