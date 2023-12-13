@@ -34,7 +34,7 @@ export async function petRegister(
   try {
     await petRegisterUseCase.execute(petData)
   } catch (error) {
-    reply.status(404).send({ message: error.message })
+    reply.status(404).send()
   }
 
   reply.status(201).send()

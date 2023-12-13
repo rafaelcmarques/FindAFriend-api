@@ -19,6 +19,6 @@ export async function searchPetsByCity(
     const pets = await searchPetByCity.execute(petData)
     reply.status(201).send({ pets })
   } catch (error) {
-    reply.status(404).send({ message: error.message })
+    reply.status(404).send()
   }
 }

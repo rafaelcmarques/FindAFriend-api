@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { MakeSearchPetById } from '@/factories/make-search-pet-by-id-use-case '
+import { PetNotFoundError } from '@/errors/pet-not-found-error'
 
 export async function searchPetById(
   request: FastifyRequest,
@@ -18,6 +19,10 @@ export async function searchPetById(
     const pet = await searchPetById.execute(petData)
     reply.status(201).send({ ...pet })
   } catch (error) {
-    reply.status(404).send({ message: error.message })
+    if (error instanceof PetNotFoundError) {
+      reply.status(404).send({ message: error.message })
+    }
+    throw error
   }
+  reply.status(201).send()
 }

@@ -1,3 +1,4 @@
+import { OrganizationAlreadyExistsError } from '@/errors/organization-already-exists-error'
 import { OrganizationAdressRepository } from '@/repositories/organization-adress-repository'
 import { OrganizationRepository } from '@/repositories/organization-repository'
 import { hash } from 'bcryptjs'
@@ -39,7 +40,7 @@ export class RegisterUseCase {
       await this.organizationRepository.findByEmail(email)
 
     if (organizationWithEmail) {
-      throw new Error('E-mail already exists.')
+      throw new OrganizationAlreadyExistsError()
     }
 
     const organization = await this.organizationRepository.create({

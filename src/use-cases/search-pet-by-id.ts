@@ -1,3 +1,4 @@
+import { PetNotFoundError } from '@/errors/pet-not-found-error'
 import { PetRepository } from '@/repositories/pet-repository'
 import { Pet } from '@prisma/client'
 
@@ -6,7 +7,7 @@ interface SearchPetsUseRequest {
 }
 
 interface SearchPetsUseResponse {
-  pet: Pet
+  pet: Pet | null
 }
 
 export class SearchPetByIdUseCase {
@@ -14,6 +15,9 @@ export class SearchPetByIdUseCase {
 
   async execute({ id }: SearchPetsUseRequest): Promise<SearchPetsUseResponse> {
     const pet = await this.petRepository.searchById(id)
+    if (!pet) {
+      throw new PetNotFoundError()
+    }
     return { pet }
   }
 }
