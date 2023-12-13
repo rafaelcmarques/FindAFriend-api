@@ -7,8 +7,14 @@ export async function searchPetsByCity(
   reply: FastifyReply,
 ) {
   const petSearchSchema = z.object({
-    query: z.string(),
+    city: z.string(),
     page: z.coerce.number(),
+    type: z.string().optional(),
+    age: z.string().optional(),
+    size: z.string().optional(),
+    energy: z.string().optional(),
+    independence_level: z.string().optional(),
+    environment: z.string().optional(),
   })
 
   const petData = petSearchSchema.parse(request.query)

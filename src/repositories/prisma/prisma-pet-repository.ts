@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { PetRepository } from '../pet-repository'
+import { PetRepository, SearchManyOptions } from '../pet-repository'
 
 export class PrismaPetRepository implements PetRepository {
   async searchById(id: string) {
@@ -16,13 +16,43 @@ export class PrismaPetRepository implements PetRepository {
     return pet
   }
 
-  async searchMany(query: string, page: number) {
-    const pets = await prisma.pet.findMany({
-      where: {
-        petLocation: {
-          city: query,
-        },
+  async searchMany({
+    city,
+    page,
+    type,
+    age,
+    size,
+    energy,
+    independence_level,
+    environment,
+  }: SearchManyOptions) {
+    const whereClause: any = {
+      petLocation: {
+        city,
       },
+    }
+
+    if (type) {
+      whereClause.animal_type = type
+    }
+    if (age) {
+      whereClause.age = age
+    }
+    if (size) {
+      whereClause.size = size
+    }
+    if (energy) {
+      whereClause.energy = energy
+    }
+    if (independence_level) {
+      whereClause.independence_level = independence_level
+    }
+    if (environment) {
+      whereClause.environment = environment
+    }
+
+    const pets = await prisma.pet.findMany({
+      where: whereClause,
       include: {
         petLocation: true,
         petRequirements: true,
@@ -30,6 +60,7 @@ export class PrismaPetRepository implements PetRepository {
       take: 20,
       skip: (page - 1) * 20,
     })
+
     return pets
   }
 
