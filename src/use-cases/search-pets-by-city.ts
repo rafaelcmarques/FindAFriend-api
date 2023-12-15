@@ -12,10 +12,6 @@ interface SearchPetsUseRequest {
   environment?: string
 }
 
-interface SearchPetsUseResponse {
-  pets: Pet[]
-}
-
 export class SearchPetsByCityUseCase {
   constructor(private petRepository: PetRepository) {}
 
@@ -28,7 +24,7 @@ export class SearchPetsByCityUseCase {
     energy,
     independence_level,
     environment,
-  }: SearchPetsUseRequest): Promise<SearchPetsUseResponse> {
+  }: SearchPetsUseRequest): Promise<Pet[]> {
     const pets = await this.petRepository.searchMany({
       city,
       page,
@@ -39,6 +35,6 @@ export class SearchPetsByCityUseCase {
       independence_level,
       environment,
     })
-    return { pets }
+    return pets
   }
 }

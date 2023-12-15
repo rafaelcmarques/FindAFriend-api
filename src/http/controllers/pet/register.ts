@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { MakePetRegisterUseCase } from '@/factories/make-pet-register-use-case'
+import { Pet } from '@prisma/client'
 
 export async function petRegister(
   request: FastifyRequest,
@@ -26,10 +27,14 @@ export async function petRegister(
     requirements: z.array(z.string()),
     organization_id: z.string(),
   })
-
-  const petData = petRegisterSchema.parse(request.body)
+  const organization_id = request.user.sub
 
   const petRegisterUseCase = MakePetRegisterUseCase()
+
+  const petData = petRegisterSchema.parse({
+    ...(request.body as Pet),
+    organization_id,
+  })
 
   try {
     await petRegisterUseCase.execute(petData)
