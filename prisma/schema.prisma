@@ -56,6 +56,7 @@ model Pet {
   petRequirements PetRequirements[]
 
   petLocation PetLocation?
+  PetImage    PetImage[]
 
   @@map("pet")
 }
@@ -83,4 +84,14 @@ model PetRequirements {
   pet_id      String
 
   @@map("pet_requirements")
+}
+
+model PetImage {
+  id   String @id @default(uuid())
+  name String
+
+  pet    Pet    @relation(fields: [pet_id], references: [id])
+  pet_id String
+
+  @@map("pet_image")
 }
