@@ -3,6 +3,8 @@ import { petRegister } from './register'
 import { searchPetsByCity } from './searchMany'
 import { searchPetById } from './searchById'
 import { verifyJWT } from '@/http/middlewares/verify-jwt'
+import { petImageUpload } from './pet-image-upload'
+import { petImageRemove } from './pet-image-remove'
 
 export async function petRoutes(app: FastifyInstance) {
   app.get('/pet/:id', searchPetById)
@@ -10,4 +12,6 @@ export async function petRoutes(app: FastifyInstance) {
 
   /** Authenticated */
   app.post('/pet', { onRequest: [verifyJWT] }, petRegister)
+  app.patch('/pet/:id', { onRequest: [verifyJWT] }, petImageUpload)
+  app.delete('/pet/:image_name', { onRequest: [verifyJWT] }, petImageRemove)
 }
