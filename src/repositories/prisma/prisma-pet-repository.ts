@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Pet, Prisma } from '@prisma/client'
 import { PetRepository, SearchManyOptions } from '../pet-repository'
-import { join } from 'path'
 
 export class PrismaPetRepository implements PetRepository {
   async searchById(id: string) {
@@ -12,6 +11,7 @@ export class PrismaPetRepository implements PetRepository {
       include: {
         petLocation: true,
         petRequirements: true,
+        PetImage: true,
       },
     })
     return pet
@@ -58,6 +58,7 @@ export class PrismaPetRepository implements PetRepository {
       include: {
         petLocation: true,
         petRequirements: true,
+        PetImage: true,
       },
       take: 20,
       skip: (page - 1) * 20,

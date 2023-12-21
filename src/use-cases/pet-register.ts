@@ -1,3 +1,4 @@
+import { PetImageRepository } from '@/repositories/pet-image-repository'
 import { PetLocationRepository } from '@/repositories/pet-location-repository'
 import { PetRepository } from '@/repositories/pet-repository'
 import { PetRequirementsRepository } from '@/repositories/pet-requirements-repository'
@@ -22,6 +23,8 @@ interface PetRegisterParams {
 
   requirements: string[]
   organization_id: string
+
+  image_name: string
 }
 
 export class PetRegisterUseCase {
@@ -29,6 +32,7 @@ export class PetRegisterUseCase {
     private petRepository: PetRepository,
     private petLocationRepository: PetLocationRepository,
     private petRequirements: PetRequirementsRepository,
+    private petImage: PetImageRepository,
   ) {}
 
   async execute({
@@ -49,6 +53,7 @@ export class PetRegisterUseCase {
     longitude,
     requirements,
     organization_id,
+    image_name,
   }: PetRegisterParams) {
     const pet = await this.petRepository.create({
       name,
@@ -79,5 +84,10 @@ export class PetRegisterUseCase {
     }))
 
     await this.petRequirements.create(petRequirementsData)
+
+    await this.petImage.create({
+      name: image_name,
+      pet: { connect: { id: pet.id } },
+    })
   }
 }

@@ -1,14 +1,25 @@
+import { env } from './env'
 import fastify from 'fastify'
+import { ZodError } from 'zod'
+import fastifyJwt from '@fastify/jwt'
 import { petRoutes } from './http/controllers/pet/routes'
 import { organizationRoutes } from './http/controllers/organization/routes'
-import { ZodError } from 'zod'
-import { env } from './env'
-import fastifyJwt from '@fastify/jwt'
+import path from 'node:path'
+
+import fastifyMultipart from '@fastify/multipart'
+import { fastifyStatic } from '@fastify/static'
 
 export const app = fastify()
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
+})
+
+app.register(fastifyMultipart)
+
+app.register(fastifyStatic, {
+  root: path.join(__dirname, '../uploads'),
+  prefix: '/show-image/',
 })
 
 app.register(organizationRoutes)
