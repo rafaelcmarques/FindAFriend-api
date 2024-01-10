@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { MakePetImageRemoveUseCase } from '@/factories/make-image-remove-use-case copy'
+import { MakePetImageRemoveUseCase } from '@/factories/make-image-remove-use-case'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 

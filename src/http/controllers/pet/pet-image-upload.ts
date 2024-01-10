@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import crypto from 'node:crypto'
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { MakePetImageUseCase } from '@/factories/make-image-upload-use-case'
+import { MakePetImageUploadUseCase } from '@/factories/make-image-upload-use-case'
 
 import fs from 'node:fs'
 import util from 'node:util'
@@ -28,7 +28,7 @@ export async function petImageUpload(
       throw new Error('Faça o upload de pelo menos uma imagem!')
     }
 
-    const petImageUseCase = MakePetImageUseCase()
+    const petImageUploadUseCase = MakePetImageUploadUseCase()
 
     const hash = crypto.createHash('md5')
     hash.update(data.filename + Date.now())
@@ -38,7 +38,7 @@ export async function petImageUpload(
 
     const imageData = petImageSchema.parse({ name, pet_id: id })
 
-    await petImageUseCase.execute(imageData)
+    await petImageUploadUseCase.execute(imageData)
 
     const imageFilePath = path.join(imagePath, name)
     const imageStream = fs.createWriteStream(imageFilePath)
