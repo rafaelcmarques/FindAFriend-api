@@ -23,8 +23,6 @@ interface PetRegisterParams {
 
   requirements: string[]
   organization_id: string
-
-  image_name: string
 }
 
 export class PetRegisterUseCase {
@@ -53,7 +51,6 @@ export class PetRegisterUseCase {
     longitude,
     requirements,
     organization_id,
-    image_name,
   }: PetRegisterParams) {
     const pet = await this.petRepository.create({
       name,
@@ -84,10 +81,5 @@ export class PetRegisterUseCase {
     }))
 
     await this.petRequirements.create(petRequirementsData)
-
-    await this.petImage.create({
-      name: image_name,
-      pet: { connect: { id: pet.id } },
-    })
   }
 }
