@@ -39,12 +39,11 @@ export async function petRegister(
 
     await petRegisterUseCase.execute(petData)
 
-    reply.code(201).send(`Pet registrado com sucesso!`)
+    reply.code(201).send()
   } catch (error) {
     if (error instanceof Error) {
       reply.code(400).send({ error: error.message })
     }
     throw error
   }
-  reply.status(201).send()
 }
